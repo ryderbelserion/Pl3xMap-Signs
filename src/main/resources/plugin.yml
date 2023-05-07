@@ -1,13 +1,15 @@
-name: Pl3xMap-Signs
-version: ${project.version}
-main: net.pl3x.map.signs.SignsPlugin
-api-version: 1.16
-authors: [ BillyGalbreath ]
-description: Signs addon for Pl3xMap
+name: "${name}"
+main: "${group}.Pl3xMapSigns"
+version: "${version}"
+api-version: "1.19"
+load: "POSTWORLD"
+authors: ${authors}
+description: "${description}"
+website: "${website}"
 softdepend:
   - Pl3xMap
 
 permissions:
   pl3xmap.signs.admin:
-    description: Allow controlling the plugin
+    description: Gives access to add/remove signs by clicking
     default: op
