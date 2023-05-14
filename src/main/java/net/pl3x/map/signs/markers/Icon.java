@@ -31,6 +31,7 @@ import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.image.IconImage;
 import net.pl3x.map.signs.Pl3xMapSigns;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 public enum Icon {
     ACACIA, BAMBOO, BIRCH, CHERRY, CRIMSON, DARK_OAK, JUNGLE, MANGROVE, OAK, SPRUCE, WARPED;
@@ -43,7 +44,7 @@ public enum Icon {
         this.key = String.format("pl3xmap_%s_sign", this.type);
     }
 
-    public String getKey() {
+    public @NotNull String getKey() {
         return this.key;
     }
 
@@ -57,7 +58,7 @@ public enum Icon {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static Icon get(Material type) {
+    public static @NotNull Icon get(@NotNull Material type) {
         return switch (type) {
             case ACACIA_SIGN, ACACIA_WALL_SIGN -> ACACIA;
             case BAMBOO_SIGN, BAMBOO_WALL_SIGN -> BAMBOO;

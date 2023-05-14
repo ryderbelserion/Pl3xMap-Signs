@@ -52,10 +52,12 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SignListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignEdit(SignChangeEvent event) {
+    public void onSignEdit(@NotNull SignChangeEvent event) {
         if (!event.getPlayer().hasPermission("pl3xmap.signs.admin")) {
             // player doesn't have permission to track signs; ignore
             return;
@@ -81,7 +83,7 @@ public class SignListener implements Listener {
     }
 
     @EventHandler
-    public void onClickSign(PlayerInteractEvent event) {
+    public void onClickSign(@NotNull PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
         if (block == null) {
             // no block was clicked; ignore
@@ -115,46 +117,46 @@ public class SignListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockDropItemEvent event) {
+    public void onSignBreak(@NotNull BlockDropItemEvent event) {
         tryRemoveSign(event.getBlockState());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockDestroyEvent event) {
+    public void onSignBreak(@NotNull BlockDestroyEvent event) {
         tryRemoveSign(event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockBurnEvent event) {
+    public void onSignBreak(@NotNull BlockBurnEvent event) {
         tryRemoveSign(event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockExplodeEvent event) {
+    public void onSignBreak(@NotNull BlockExplodeEvent event) {
         event.blockList().forEach(block -> tryRemoveSign(block.getState()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(EntityExplodeEvent event) {
+    public void onSignBreak(@NotNull EntityExplodeEvent event) {
         event.blockList().forEach(block -> tryRemoveSign(block.getState()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockPistonExtendEvent event) {
+    public void onSignBreak(@NotNull BlockPistonExtendEvent event) {
         event.getBlocks().forEach(block -> tryRemoveSign(block.getState()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockPistonRetractEvent event) {
+    public void onSignBreak(@NotNull BlockPistonRetractEvent event) {
         event.getBlocks().forEach(block -> tryRemoveSign(block.getState()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(BlockFromToEvent event) {
+    public void onSignBreak(@NotNull BlockFromToEvent event) {
         tryRemoveSign(event.getToBlock().getState());
     }
 
-    private void tryAddSign(BlockState state) {
+    private void tryAddSign(@NotNull BlockState state) {
         if (state instanceof org.bukkit.block.Sign sign) {
             Location loc = sign.getLocation();
             Position pos = new Position(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
@@ -162,13 +164,13 @@ public class SignListener implements Listener {
         }
     }
 
-    private void tryAddSign(BlockState state, Position pos, List<Component> components) {
+    private void tryAddSign(@NotNull BlockState state, @NotNull Position pos, @NotNull List<Component> components) {
         if (state instanceof org.bukkit.block.Sign sign) {
             tryAddSign(sign, pos, components);
         }
     }
 
-    private void tryAddSign(org.bukkit.block.Sign sign, Position pos, List<Component> components) {
+    private void tryAddSign(@NotNull org.bukkit.block.Sign sign, @NotNull Position pos, @NotNull List<Component> components) {
         SignsLayer layer = getLayer(sign);
         if (layer == null) {
             // world has no signs layer; ignore
@@ -192,13 +194,13 @@ public class SignListener implements Listener {
         particles(sign.getLocation(), Particle.VILLAGER_HAPPY, Sound.ENTITY_PLAYER_LEVELUP);
     }
 
-    private void tryRemoveSign(BlockState state) {
+    private void tryRemoveSign(@NotNull BlockState state) {
         if (state instanceof org.bukkit.block.Sign sign) {
             tryRemoveSign(sign);
         }
     }
 
-    private void tryRemoveSign(org.bukkit.block.Sign sign) {
+    private void tryRemoveSign(@NotNull org.bukkit.block.Sign sign) {
         SignsLayer layer = getLayer(sign);
         if (layer == null) {
             // world has no signs layer; ignore
@@ -214,7 +216,7 @@ public class SignListener implements Listener {
         particles(sign.getLocation(), Particle.WAX_ON, Sound.ENTITY_GHAST_HURT);
     }
 
-    private SignsLayer getLayer(BlockState state) {
+    private @Nullable SignsLayer getLayer(@NotNull BlockState state) {
         World world = Pl3xMap.api().getWorldRegistry().get(state.getWorld().getName());
         if (world == null || !world.isEnabled()) {
             // world is missing or not enabled; ignore
@@ -223,7 +225,7 @@ public class SignListener implements Listener {
         return (SignsLayer) world.getLayerRegistry().get(SignsLayer.KEY);
     }
 
-    private void particles(Location loc, Particle particle, Sound sound) {
+    private void particles(@NotNull Location loc, @NotNull Particle particle, @NotNull Sound sound) {
         loc.getWorld().playSound(loc, sound, 1.0F, 1.0F);
         ThreadLocalRandom rand = ThreadLocalRandom.current();
         for (int i = 0; i < 20; ++i) {

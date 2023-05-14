@@ -36,12 +36,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import libs.org.checkerframework.checker.nullness.qual.NonNull;
 import net.pl3x.map.core.markers.Point;
 import net.pl3x.map.core.markers.layer.WorldLayer;
 import net.pl3x.map.core.markers.marker.Marker;
 import net.pl3x.map.core.markers.option.Options;
 import net.pl3x.map.signs.configuration.WorldConfig;
+import org.jetbrains.annotations.NotNull;
 
 public class SignsLayer extends WorldLayer {
     public static final String KEY = "pl3xmap_signs";
@@ -52,7 +52,7 @@ public class SignsLayer extends WorldLayer {
 
     private final Map<Position, Sign> signs = new ConcurrentHashMap<>();
 
-    public SignsLayer(@NonNull WorldConfig config) {
+    public SignsLayer(@NotNull WorldConfig config) {
         super(KEY, config.getWorld(), () -> config.LAYER_LABEL);
         this.config = config;
         this.dataFile = getWorld().getTilesDirectory().resolve("signs.dat");
@@ -75,7 +75,7 @@ public class SignsLayer extends WorldLayer {
     }
 
     @Override
-    public @NonNull Collection<@NonNull Marker<@NonNull ?>> getMarkers() {
+    public @NotNull Collection<Marker<?>> getMarkers() {
         return this.signs.values().stream().map(sign -> {
             String key = String.format("%s_%s_%d_%d", KEY, getWorld().getName(), sign.pos().x(), sign.pos().z());
             return Marker.icon(key, sign.pos().toPoint(), sign.icon().getKey(), this.config.ICON_SIZE)
@@ -90,20 +90,20 @@ public class SignsLayer extends WorldLayer {
         }).collect(Collectors.toList());
     }
 
-    public Collection<Sign> getSigns() {
+    public @NotNull Collection<Sign> getSigns() {
         return Collections.unmodifiableCollection(this.signs.values());
     }
 
-    public boolean hasSign(Position pos) {
+    public boolean hasSign(@NotNull Position pos) {
         return this.signs.containsKey(pos);
     }
 
-    public void putSign(Sign sign) {
+    public void putSign(@NotNull Sign sign) {
         this.signs.put(sign.pos(), sign);
         saveData();
     }
 
-    public void removeSign(Position pos) {
+    public void removeSign(@NotNull Position pos) {
         this.signs.remove(pos);
         saveData();
     }

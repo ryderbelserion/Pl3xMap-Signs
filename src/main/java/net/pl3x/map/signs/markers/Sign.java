@@ -28,19 +28,20 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
-public record Sign(Position pos, Icon icon, List<String> lines) {
-    public boolean isSign(World world) {
+public record Sign(@NotNull Position pos, @NotNull Icon icon, @NotNull List<String> lines) {
+    public boolean isSign(@NotNull World world) {
         return world.getBlockAt(pos().x(), pos().y(), pos().z()).getState() instanceof org.bukkit.block.Sign;
     }
 
-    public static Sign load(DataInputStream in) throws IOException {
+    public static @NotNull Sign load(@NotNull DataInputStream in) throws IOException {
         return new Sign(Position.load(in), Icon.valueOf(in.readUTF()),
                 List.of(in.readUTF(), in.readUTF(), in.readUTF(), in.readUTF())
         );
     }
 
-    public void save(DataOutputStream out) throws IOException {
+    public void save(@NotNull DataOutputStream out) throws IOException {
         pos().save(out);
         out.writeUTF(icon().name());
         for (String line : lines()) {
