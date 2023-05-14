@@ -35,34 +35,12 @@ import org.bukkit.Material;
 public enum Icon {
     ACACIA, BAMBOO, BIRCH, CHERRY, CRIMSON, DARK_OAK, JUNGLE, MANGROVE, OAK, SPRUCE, WARPED;
 
+    private final String type;
     private final String key;
 
     Icon() {
-        Pl3xMapSigns plugin = Pl3xMapSigns.getPlugin(Pl3xMapSigns.class);
-
-        String signType = name().toLowerCase(Locale.ROOT);
-
-        this.key = String.format("pl3xmap_%s_sign", signType);
-        String signFilename = String.format("icons%s%s_sign.png", File.separator, signType);
-        File signFile = new File(plugin.getDataFolder(), signFilename);
-        if (!signFile.exists()) {
-            plugin.saveResource(signFilename, false);
-        }
-
-        String tooltipKey = String.format("pl3xmap_%s_sign_tooltip", signType);
-        String tooltipFilename = String.format("icons%s%s_tooltip.png", File.separator, signType);
-        File tooltipFile = new File(plugin.getDataFolder(), tooltipFilename);
-        if (!tooltipFile.exists()) {
-            plugin.saveResource(tooltipFilename, false);
-        }
-
-        try {
-            Pl3xMap.api().getIconRegistry().register(new IconImage(this.key, ImageIO.read(signFile), "png"));
-            Pl3xMap.api().getIconRegistry().register(new IconImage(tooltipKey, ImageIO.read(tooltipFile), "png"));
-        } catch (IOException e) {
-            plugin.getLogger().warning("Failed to register icon (" + signType + ") " + signFilename);
-            e.printStackTrace();
-        }
+        this.type = name().toLowerCase(Locale.ROOT);
+        this.key = String.format("pl3xmap_%s_sign", this.type);
     }
 
     public String getKey() {
@@ -93,5 +71,31 @@ public enum Icon {
             case WARPED_SIGN, WARPED_WALL_SIGN -> WARPED;
             default -> OAK;
         };
+    }
+
+    public static void register() {
+        Pl3xMapSigns plugin = Pl3xMapSigns.getPlugin(Pl3xMapSigns.class);
+        for (Icon icon : values()) {
+            String signFilename = String.format("icons%s%s_sign.png", File.separator, icon.type);
+            File signFile = new File(plugin.getDataFolder(), signFilename);
+            if (!signFile.exists()) {
+                plugin.saveResource(signFilename, false);
+            }
+
+            String tooltipKey = String.format("pl3xmap_%s_sign_tooltip", icon.type);
+            String tooltipFilename = String.format("icons%s%s_tooltip.png", File.separator, icon.type);
+            File tooltipFile = new File(plugin.getDataFolder(), tooltipFilename);
+            if (!tooltipFile.exists()) {
+                plugin.saveResource(tooltipFilename, false);
+            }
+
+            try {
+                Pl3xMap.api().getIconRegistry().register(new IconImage(icon.key, ImageIO.read(signFile), "png"));
+                Pl3xMap.api().getIconRegistry().register(new IconImage(tooltipKey, ImageIO.read(tooltipFile), "png"));
+            } catch (IOException e) {
+                plugin.getLogger().warning("Failed to register icon (" + icon.type + ") " + signFilename);
+                e.printStackTrace();
+            }
+        }
     }
 }
