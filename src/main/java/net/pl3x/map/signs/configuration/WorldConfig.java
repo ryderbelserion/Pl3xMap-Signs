@@ -24,12 +24,15 @@
 package net.pl3x.map.signs.configuration;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 import libs.org.simpleyaml.configuration.ConfigurationSection;
 import net.pl3x.map.core.configuration.AbstractConfig;
 import net.pl3x.map.core.markers.Vector;
 import net.pl3x.map.core.world.World;
 import net.pl3x.map.signs.Pl3xMapSigns;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -230,6 +233,27 @@ public class WorldConfig extends AbstractConfig {
               <line4>
             </center>""";
 
+    @Key("sign.add.particles")
+    @Comment("""
+            The particles to play when a sign is added to Pl3xMap.
+            https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html""")
+    public Particle SIGN_ADD_PARTICLES = Particle.VILLAGER_HAPPY;
+    @Key("sign.add.sound")
+    @Comment("""
+            The sound to play when a sign is added to Pl3xMap.
+            https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html""")
+    public Sound SIGN_ADD_SOUND = Sound.ENTITY_PLAYER_LEVELUP;
+    @Key("sign.remove.particles")
+    @Comment("""
+            The particles to play when a sign is removed from Pl3xMap.
+            https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html""")
+    public Particle SIGN_REMOVE_PARTICLES = Particle.WAX_ON;
+    @Key("sign.remove.sound")
+    @Comment("""
+            The sound to play when a sign is removed from Pl3xMap.
+            https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html""")
+    public Sound SIGN_REMOVE_SOUND = Sound.ENTITY_GHAST_HURT;
+
     private final World world;
 
     public WorldConfig(@NotNull World world) {
@@ -271,13 +295,32 @@ public class WorldConfig extends AbstractConfig {
         if (value == null) {
             return null;
         }
-        if ("marker.icon.size".equals(path.substring(path.indexOf(".", path.indexOf(".") + 1) + 1))) {
-            if (value instanceof ConfigurationSection section) {
-                return Vector.of(section.getDouble("x"), section.getDouble("z"));
-            } else if (value instanceof Map<?, ?>) {
-                @SuppressWarnings("unchecked")
-                Map<String, Double> map = (Map<String, Double>) value;
-                return Vector.of(map.get("x"), map.get("z"));
+        String subpath = path.substring(path.indexOf(".", path.indexOf(".") + 1) + 1);
+        switch (subpath) {
+            case "marker.icon.size" -> {
+                if (value instanceof ConfigurationSection section) {
+                    return Vector.of(section.getDouble("x"), section.getDouble("z"));
+                } else if (value instanceof Map<?, ?>) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Double> map = (Map<String, Double>) value;
+                    return Vector.of(map.get("x"), map.get("z"));
+                }
+            }
+            case "sign.add.particles", "sign.remove.particles" -> {
+                try {
+                    return Particle.valueOf(value.toString().toUpperCase(Locale.ROOT));
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    return null;
+                }
+            }
+            case "sign.add.sound", "sign.remove.sound" -> {
+                try {
+                    return Sound.valueOf(value.toString().toUpperCase(Locale.ROOT));
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    return null;
+                }
             }
         }
         return super.get(path);
@@ -287,6 +330,8 @@ public class WorldConfig extends AbstractConfig {
     protected void set(@NotNull String path, @Nullable Object value) {
         if (value instanceof Vector vector) {
             value = Map.of("x", vector.x(), "z", vector.z());
+        } else if (value instanceof Enum<?> enumeration) {
+            value = enumeration.name();
         }
         getConfig().set(path, value);
     }

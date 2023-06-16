@@ -78,16 +78,20 @@ public class SignsLayer extends WorldLayer {
     public @NotNull Collection<Marker<?>> getMarkers() {
         return this.signs.values().stream().map(sign -> {
             String key = String.format("%s_%s_%d_%d", KEY, getWorld().getName(), sign.pos().x(), sign.pos().z());
-            return Marker.icon(key, sign.pos().toPoint(), sign.icon().getKey(), this.config.ICON_SIZE)
+            return Marker.icon(key, sign.pos().toPoint(), sign.icon().getKey(), getConfig().ICON_SIZE)
                     .setOptions(this.options.asBuilder()
                             .popupPane(String.format("%s_popup", sign.icon().getKey()))
-                            .popupContent(config.ICON_POPUP_CONTENT
+                            .popupContent(getConfig().ICON_POPUP_CONTENT
                                     .replace("<line1>", sign.lines().get(0))
                                     .replace("<line2>", sign.lines().get(1))
                                     .replace("<line3>", sign.lines().get(2))
                                     .replace("<line4>", sign.lines().get(3))
                             ).build());
         }).collect(Collectors.toList());
+    }
+
+    public @NotNull WorldConfig getConfig() {
+        return this.config;
     }
 
     public @NotNull Collection<Sign> getSigns() {

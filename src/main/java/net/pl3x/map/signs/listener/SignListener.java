@@ -191,7 +191,7 @@ public class SignListener implements Listener {
         layer.putSign(new Sign(pos, icon, lines));
 
         // play fancy particles as visualizer
-        particles(sign.getLocation(), Particle.VILLAGER_HAPPY, Sound.ENTITY_PLAYER_LEVELUP);
+        particles(sign.getLocation(), layer.getConfig().SIGN_ADD_PARTICLES, layer.getConfig().SIGN_ADD_SOUND);
     }
 
     private void tryRemoveSign(@NotNull BlockState state) {
@@ -213,7 +213,7 @@ public class SignListener implements Listener {
         layer.removeSign(pos);
 
         // play fancy particles as visualizer
-        particles(sign.getLocation(), Particle.WAX_ON, Sound.ENTITY_GHAST_HURT);
+        particles(sign.getLocation(), layer.getConfig().SIGN_REMOVE_PARTICLES, layer.getConfig().SIGN_REMOVE_SOUND);
     }
 
     private @Nullable SignsLayer getLayer(@NotNull BlockState state) {
@@ -225,14 +225,18 @@ public class SignListener implements Listener {
         return (SignsLayer) world.getLayerRegistry().get(SignsLayer.KEY);
     }
 
-    private void particles(@NotNull Location loc, @NotNull Particle particle, @NotNull Sound sound) {
-        loc.getWorld().playSound(loc, sound, 1.0F, 1.0F);
-        ThreadLocalRandom rand = ThreadLocalRandom.current();
-        for (int i = 0; i < 20; ++i) {
-            double x = loc.getX() + rand.nextGaussian();
-            double y = loc.getY() + rand.nextGaussian();
-            double z = loc.getZ() + rand.nextGaussian();
-            loc.getWorld().spawnParticle(particle, x, y, z, 1, 0, 0, 0, 0, null, true);
+    private void particles(@NotNull Location loc, @Nullable Particle particle, @Nullable Sound sound) {
+        if (sound != null) {
+            loc.getWorld().playSound(loc, sound, 1.0F, 1.0F);
+        }
+        if (particle != null) {
+            ThreadLocalRandom rand = ThreadLocalRandom.current();
+            for (int i = 0; i < 20; ++i) {
+                double x = loc.getX() + rand.nextGaussian();
+                double y = loc.getY() + rand.nextGaussian();
+                double z = loc.getZ() + rand.nextGaussian();
+                loc.getWorld().spawnParticle(particle, x, y, z, 1, 0, 0, 0, 0, null, true);
+            }
         }
     }
 }
