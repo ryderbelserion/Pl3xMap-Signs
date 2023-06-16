@@ -112,7 +112,11 @@ public class SignListener implements Listener {
                 event.setCancelled(true);
                 tryRemoveSign(sign);
             }
-            case RIGHT_CLICK_BLOCK -> tryAddSign(sign);
+            case RIGHT_CLICK_BLOCK -> {
+                // cancel event to stop sign editor from opening
+                event.setCancelled(true);
+                tryAddSign(sign);
+            }
         }
     }
 
