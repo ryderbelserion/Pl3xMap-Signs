@@ -25,24 +25,30 @@ package net.pl3x.map.signs.markers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import javax.imageio.ImageIO;
+import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.image.IconImage;
 import net.pl3x.map.signs.Pl3xMapSigns;
-import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum Icon {
     ACACIA, BAMBOO, BIRCH, CHERRY, CRIMSON, DARK_OAK, JUNGLE, MANGROVE, OAK, SPRUCE, WARPED;
 
-    private final String type;
+    private final String name;
     private final String key;
 
     Icon() {
-        this.type = name().toLowerCase(Locale.ROOT);
-        this.key = String.format("pl3xmap_%s_sign", this.type);
+        this.name = name().toLowerCase(Locale.ROOT);
+        this.key = String.format("pl3xmap_%s_sign", this.name);
     }
 
     public @NotNull String getKey() {
@@ -58,34 +64,29 @@ public enum Icon {
         }
     }
 
-    public static @Nullable Icon get(@NotNull Material type) {
-        return switch (type) {
-            case ACACIA_SIGN, ACACIA_WALL_SIGN, ACACIA_HANGING_SIGN, ACACIA_WALL_HANGING_SIGN -> ACACIA;
-            case BAMBOO_SIGN, BAMBOO_WALL_SIGN, BAMBOO_HANGING_SIGN, BAMBOO_WALL_HANGING_SIGN -> BAMBOO;
-            case BIRCH_SIGN, BIRCH_WALL_SIGN, BIRCH_HANGING_SIGN, BIRCH_WALL_HANGING_SIGN -> BIRCH;
-            case CHERRY_SIGN, CHERRY_WALL_SIGN, CHERRY_HANGING_SIGN, CHERRY_WALL_HANGING_SIGN -> CHERRY;
-            case CRIMSON_SIGN, CRIMSON_WALL_SIGN, CRIMSON_HANGING_SIGN, CRIMSON_WALL_HANGING_SIGN -> CRIMSON;
-            case DARK_OAK_SIGN, DARK_OAK_WALL_SIGN, DARK_OAK_HANGING_SIGN, DARK_OAK_WALL_HANGING_SIGN -> DARK_OAK;
-            case JUNGLE_SIGN, JUNGLE_WALL_SIGN, JUNGLE_HANGING_SIGN, JUNGLE_WALL_HANGING_SIGN -> JUNGLE;
-            case MANGROVE_SIGN, MANGROVE_WALL_SIGN, MANGROVE_HANGING_SIGN, MANGROVE_WALL_HANGING_SIGN -> MANGROVE;
-            case OAK_SIGN, OAK_WALL_SIGN, OAK_HANGING_SIGN, OAK_WALL_HANGING_SIGN -> OAK;
-            case SPRUCE_SIGN, SPRUCE_WALL_SIGN, SPRUCE_HANGING_SIGN, SPRUCE_WALL_HANGING_SIGN -> SPRUCE;
-            case WARPED_SIGN, WARPED_WALL_SIGN, WARPED_HANGING_SIGN, WARPED_WALL_HANGING_SIGN -> WARPED;
-            default -> null;
-        };
+    private static final Map<String, Icon> BY_NAME = new HashMap<>();
+    private static final Map<WoodType, Icon> BY_WOOD = new HashMap<>();
+
+    static {
+        Arrays.stream(values()).forEach(icon -> BY_NAME.put(icon.name, icon));
+        WoodType.values().forEach(type -> BY_WOOD.computeIfAbsent(type, k -> BY_NAME.get(type.name())));
+    }
+
+    public static @Nullable Icon get(@NotNull Sign sign) {
+        return BY_WOOD.get(((SignBlock) ((CraftBlock) sign.getBlock()).getNMS().getBlock()).type());
     }
 
     public static void register() {
         Pl3xMapSigns plugin = Pl3xMapSigns.getPlugin(Pl3xMapSigns.class);
         for (Icon icon : values()) {
-            String signFilename = String.format("icons%s%s_sign.png", File.separator, icon.type);
+            String signFilename = String.format("icons%s%s_sign.png", File.separator, icon.name);
             File signFile = new File(plugin.getDataFolder(), signFilename);
             if (!signFile.exists()) {
                 plugin.saveResource(signFilename, false);
             }
 
-            String tooltipKey = String.format("pl3xmap_%s_sign_tooltip", icon.type);
-            String tooltipFilename = String.format("icons%s%s_tooltip.png", File.separator, icon.type);
+            String tooltipKey = String.format("pl3xmap_%s_sign_tooltip", icon.name);
+            String tooltipFilename = String.format("icons%s%s_tooltip.png", File.separator, icon.name);
             File tooltipFile = new File(plugin.getDataFolder(), tooltipFilename);
             if (!tooltipFile.exists()) {
                 plugin.saveResource(tooltipFilename, false);
@@ -95,7 +96,7 @@ public enum Icon {
                 Pl3xMap.api().getIconRegistry().register(new IconImage(icon.key, ImageIO.read(signFile), "png"));
                 Pl3xMap.api().getIconRegistry().register(new IconImage(tooltipKey, ImageIO.read(tooltipFile), "png"));
             } catch (IOException e) {
-                plugin.getLogger().warning("Failed to register icon (" + icon.type + ") " + signFilename);
+                plugin.getLogger().warning("Failed to register icon (" + icon.name + ") " + signFilename);
                 e.printStackTrace();
             }
         }

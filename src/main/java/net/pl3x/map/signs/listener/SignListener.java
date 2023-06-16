@@ -181,7 +181,7 @@ public class SignListener implements Listener {
             return;
         }
 
-        Icon icon = Icon.get(sign.getType());
+        Icon icon = Icon.get(sign);
         if (icon == null) {
             // material is not a registered sign; ignore
             return;
