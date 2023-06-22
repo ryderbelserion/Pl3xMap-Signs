@@ -23,11 +23,8 @@
  */
 package net.pl3x.map.signs.listener;
 
-import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.world.World;
 import net.pl3x.map.signs.markers.Icon;
@@ -39,7 +36,11 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -79,7 +80,7 @@ public class SignListener implements Listener {
             return;
         }
 
-        tryAddSign(state, pos, event.lines());
+        tryAddSign(state, pos, event.getSide());
     }
 
     @EventHandler
@@ -115,7 +116,12 @@ public class SignListener implements Listener {
             case RIGHT_CLICK_BLOCK -> {
                 // cancel event to stop sign editor from opening
                 event.setCancelled(true);
-                tryAddSign(sign);
+
+                BlockFace facing = event.getBlockFace();
+                if (state.getBlockData() instanceof Directional directional) {
+                    facing = directional.getFacing();
+                }
+                tryAddSign(sign, sign.getSide(event.getBlockFace() == facing ? Side.FRONT : Side.BACK));
             }
         }
     }
@@ -123,11 +129,6 @@ public class SignListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignBreak(@NotNull BlockDropItemEvent event) {
         tryRemoveSign(event.getBlockState());
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(@NotNull BlockDestroyEvent event) {
-        tryRemoveSign(event.getBlock().getState());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -160,21 +161,21 @@ public class SignListener implements Listener {
         tryRemoveSign(event.getToBlock().getState());
     }
 
-    private void tryAddSign(@NotNull BlockState state) {
+    private void tryAddSign(BlockState state, Position pos, Side side) {
+        if (state instanceof org.bukkit.block.Sign sign) {
+            tryAddSign(sign, pos, sign.getSide(side));
+        }
+    }
+
+    private void tryAddSign(@NotNull BlockState state, @NotNull SignSide side) {
         if (state instanceof org.bukkit.block.Sign sign) {
             Location loc = sign.getLocation();
             Position pos = new Position(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-            tryAddSign(sign, pos, sign.lines());
+            tryAddSign(sign, pos, side);
         }
     }
 
-    private void tryAddSign(@NotNull BlockState state, @NotNull Position pos, @NotNull List<Component> components) {
-        if (state instanceof org.bukkit.block.Sign sign) {
-            tryAddSign(sign, pos, components);
-        }
-    }
-
-    private void tryAddSign(@NotNull org.bukkit.block.Sign sign, @NotNull Position pos, @NotNull List<Component> components) {
+    private void tryAddSign(org.bukkit.block.Sign sign, Position pos, SignSide side) {
         SignsLayer layer = getLayer(sign);
         if (layer == null) {
             // world has no signs layer; ignore
@@ -187,18 +188,14 @@ public class SignListener implements Listener {
             return;
         }
 
-        List<String> lines = components.stream()
-                // todo create component->html serializer
-                .map(line -> PlainTextComponentSerializer.plainText().serialize(line))
-                .toList();
-
-        layer.putSign(new Sign(pos, icon, lines));
+        // add sign to layer
+        layer.putSign(new Sign(pos, icon, getLines(side)));
 
         // play fancy particles as visualizer
         particles(sign.getLocation(), layer.getConfig().SIGN_ADD_PARTICLES, layer.getConfig().SIGN_ADD_SOUND);
     }
 
-    private void tryRemoveSign(@NotNull BlockState state) {
+    protected void tryRemoveSign(@NotNull BlockState state) {
         if (state instanceof org.bukkit.block.Sign sign) {
             tryRemoveSign(sign);
         }
@@ -220,7 +217,11 @@ public class SignListener implements Listener {
         particles(sign.getLocation(), layer.getConfig().SIGN_REMOVE_PARTICLES, layer.getConfig().SIGN_REMOVE_SOUND);
     }
 
-    private @Nullable SignsLayer getLayer(@NotNull BlockState state) {
+    protected List<String> getLines(SignSide side) {
+        return List.of(side.getLines());
+    }
+
+    protected @Nullable SignsLayer getLayer(@NotNull BlockState state) {
         World world = Pl3xMap.api().getWorldRegistry().get(state.getWorld().getName());
         if (world == null || !world.isEnabled()) {
             // world is missing or not enabled; ignore
@@ -229,7 +230,7 @@ public class SignListener implements Listener {
         return (SignsLayer) world.getLayerRegistry().get(SignsLayer.KEY);
     }
 
-    private void particles(@NotNull Location loc, @Nullable Particle particle, @Nullable Sound sound) {
+    protected void particles(@NotNull Location loc, @Nullable Particle particle, @Nullable Sound sound) {
         if (sound != null) {
             loc.getWorld().playSound(loc, sound, 1.0F, 1.0F);
         }

@@ -24,6 +24,7 @@
 package net.pl3x.map.signs;
 
 import net.pl3x.map.core.Pl3xMap;
+import net.pl3x.map.signs.listener.PaperSignListener;
 import net.pl3x.map.signs.listener.SignListener;
 import net.pl3x.map.signs.listener.WorldListener;
 import net.pl3x.map.signs.markers.Icon;
@@ -41,7 +42,12 @@ public final class Pl3xMapSigns extends JavaPlugin {
 
         Icon.saveGimpSrc();
 
-        getServer().getPluginManager().registerEvents(new SignListener(), this);
+        try {
+            Class.forName("io.papermc.paper.configuration.PaperConfigurations");
+            getServer().getPluginManager().registerEvents(new PaperSignListener(), this);
+        } catch (Throwable e) {
+            getServer().getPluginManager().registerEvents(new SignListener(), this);
+        }
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
     }
 
