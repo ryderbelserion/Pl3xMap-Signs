@@ -57,6 +57,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SignListener implements Listener {
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignEdit(@NotNull SignChangeEvent event) {
         if (!event.getPlayer().hasPermission("pl3xmap.signs.admin")) {
@@ -67,6 +68,7 @@ public class SignListener implements Listener {
         BlockState state = event.getBlock().getState();
 
         SignsLayer layer = getLayer(state);
+
         if (layer == null) {
             // world doesn't have a signs layer; ignore
             return;
@@ -86,6 +88,7 @@ public class SignListener implements Listener {
     @EventHandler
     public void onClickSign(@NotNull PlayerInteractEvent event) {
         Block block = event.getClickedBlock();
+
         if (block == null) {
             // no block was clicked; ignore
             return;
@@ -113,14 +116,17 @@ public class SignListener implements Listener {
                 event.setCancelled(true);
                 tryRemoveSign(sign);
             }
+
             case RIGHT_CLICK_BLOCK -> {
                 // cancel event to stop sign editor from opening
                 event.setCancelled(true);
 
                 BlockFace facing = event.getBlockFace();
+
                 if (state.getBlockData() instanceof Directional directional) {
                     facing = directional.getFacing();
                 }
+
                 tryAddSign(sign, sign.getSide(event.getBlockFace() == facing ? Side.FRONT : Side.BACK));
             }
         }
@@ -203,6 +209,7 @@ public class SignListener implements Listener {
 
     private void tryRemoveSign(@NotNull org.bukkit.block.Sign sign) {
         SignsLayer layer = getLayer(sign);
+
         if (layer == null) {
             // world has no signs layer; ignore
             return;
@@ -223,19 +230,24 @@ public class SignListener implements Listener {
 
     protected @Nullable SignsLayer getLayer(@NotNull BlockState state) {
         World world = Pl3xMap.api().getWorldRegistry().get(state.getWorld().getName());
+
         if (world == null || !world.isEnabled()) {
             // world is missing or not enabled; ignore
             return null;
         }
+
         return (SignsLayer) world.getLayerRegistry().get(SignsLayer.KEY);
     }
 
     protected void particles(@NotNull Location loc, @Nullable Particle particle, @Nullable Sound sound) {
+
         if (sound != null) {
             loc.getWorld().playSound(loc, sound, 1.0F, 1.0F);
         }
+
         if (particle != null) {
             ThreadLocalRandom rand = ThreadLocalRandom.current();
+
             for (int i = 0; i < 20; ++i) {
                 double x = loc.getX() + rand.nextGaussian();
                 double y = loc.getY() + rand.nextGaussian();

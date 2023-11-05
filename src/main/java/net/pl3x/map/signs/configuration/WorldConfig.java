@@ -280,8 +280,8 @@ public class WorldConfig extends AbstractConfig {
         if (getConfig().get("world-settings.default." + path) == null) {
             set("world-settings.default." + path, def);
         }
-        return get("world-settings." + this.world.getName() + "." + path,
-                get("world-settings.default." + path, def));
+
+        return get("world-settings." + this.world.getName() + "." + path, get("world-settings.default." + path, def));
     }
 
     @Override
@@ -292,10 +292,13 @@ public class WorldConfig extends AbstractConfig {
     @Override
     protected @Nullable Object get(@NotNull String path) {
         Object value = getConfig().get(path);
+
         if (value == null) {
             return null;
         }
+
         String subpath = path.substring(path.indexOf(".", path.indexOf(".") + 1) + 1);
+
         switch (subpath) {
             case "marker.icon.size" -> {
                 if (value instanceof ConfigurationSection section) {
@@ -306,6 +309,7 @@ public class WorldConfig extends AbstractConfig {
                     return Vector.of(map.get("x"), map.get("z"));
                 }
             }
+
             case "sign.add.particles", "sign.remove.particles" -> {
                 try {
                     return Particle.valueOf(value.toString().toUpperCase(Locale.ROOT));
@@ -314,6 +318,7 @@ public class WorldConfig extends AbstractConfig {
                     return null;
                 }
             }
+
             case "sign.add.sound", "sign.remove.sound" -> {
                 try {
                     return Sound.valueOf(value.toString().toUpperCase(Locale.ROOT));
@@ -323,6 +328,7 @@ public class WorldConfig extends AbstractConfig {
                 }
             }
         }
+
         return super.get(path);
     }
 
@@ -333,6 +339,7 @@ public class WorldConfig extends AbstractConfig {
         } else if (value instanceof Enum<?> enumeration) {
             value = enumeration.name();
         }
+
         getConfig().set(path, value);
     }
 }

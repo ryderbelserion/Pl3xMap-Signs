@@ -42,6 +42,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class WorldListener implements EventListener, Listener {
+
     public WorldListener() {
         Pl3xMap.api().getEventRegistry().register(this);
     }
@@ -52,6 +53,7 @@ public class WorldListener implements EventListener, Listener {
             // chunk is new; ignore
             return;
         }
+
         checkChunk(event.getChunk());
     }
 
@@ -80,8 +82,7 @@ public class WorldListener implements EventListener, Listener {
     public void onWorldUnloaded(@NotNull WorldUnloadedEvent event) {
         try {
             event.getWorld().getLayerRegistry().unregister(SignsLayer.KEY);
-        } catch (Throwable ignore) {
-        }
+        } catch (Throwable ignore) {}
     }
 
     private void registerWorld(@NotNull World world) {
@@ -92,12 +93,14 @@ public class WorldListener implements EventListener, Listener {
         org.bukkit.World bukkitWorld = chunk.getWorld();
 
         World world = Pl3xMap.api().getWorldRegistry().get(bukkitWorld.getName());
+
         if (world == null) {
             // world is missing or not enabled; ignore
             return;
         }
 
         SignsLayer layer = (SignsLayer) world.getLayerRegistry().get(SignsLayer.KEY);
+
         if (layer == null) {
             // world has no signs layer; ignore
             return;

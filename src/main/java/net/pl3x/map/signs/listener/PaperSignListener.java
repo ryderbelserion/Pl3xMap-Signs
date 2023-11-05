@@ -32,6 +32,7 @@ import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
 public class PaperSignListener extends SignListener {
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSignBreak(@NotNull BlockDestroyEvent event) {
         tryRemoveSign(event.getBlock().getState());

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;
@@ -36,7 +37,7 @@ import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.image.IconImage;
 import net.pl3x.map.signs.Pl3xMapSigns;
 import org.bukkit.block.Sign;
-import org.bukkit.craftbukkit.v1_20_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +82,7 @@ public enum Icon {
         for (Icon icon : values()) {
             String signFilename = String.format("icons%s%s_sign.png", File.separator, icon.name);
             File signFile = new File(plugin.getDataFolder(), signFilename);
+
             if (!signFile.exists()) {
                 plugin.saveResource(signFilename, false);
             }
@@ -88,6 +90,7 @@ public enum Icon {
             String tooltipKey = String.format("pl3xmap_%s_sign_tooltip", icon.name);
             String tooltipFilename = String.format("icons%s%s_tooltip.png", File.separator, icon.name);
             File tooltipFile = new File(plugin.getDataFolder(), tooltipFilename);
+
             if (!tooltipFile.exists()) {
                 plugin.saveResource(tooltipFilename, false);
             }
@@ -96,8 +99,7 @@ public enum Icon {
                 Pl3xMap.api().getIconRegistry().register(new IconImage(icon.key, ImageIO.read(signFile), "png"));
                 Pl3xMap.api().getIconRegistry().register(new IconImage(tooltipKey, ImageIO.read(tooltipFile), "png"));
             } catch (IOException e) {
-                plugin.getLogger().warning("Failed to register icon (" + icon.name + ") " + signFilename);
-                e.printStackTrace();
+                plugin.getLogger().log(Level.WARNING, "Failed to register icon (" + icon.name + ") " + signFilename, e);
             }
         }
     }

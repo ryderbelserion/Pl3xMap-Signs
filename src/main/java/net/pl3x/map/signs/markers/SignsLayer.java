@@ -44,6 +44,7 @@ import net.pl3x.map.signs.configuration.WorldConfig;
 import org.jetbrains.annotations.NotNull;
 
 public class SignsLayer extends WorldLayer {
+
     public static final String KEY = "pl3xmap_signs";
 
     private final Path dataFile;

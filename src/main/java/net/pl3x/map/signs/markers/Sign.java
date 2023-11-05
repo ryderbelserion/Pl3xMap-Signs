@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 public record Sign(@NotNull Position pos, @NotNull Icon icon, @NotNull List<String> lines) {
+
     public boolean isSign(@NotNull World world) {
         return world.getBlockAt(pos().x(), pos().y(), pos().z()).getState() instanceof org.bukkit.block.Sign;
     }
