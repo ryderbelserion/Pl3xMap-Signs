@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs;
+package com.ryderbelserion.map.signs;
 
+import com.ryderbelserion.map.signs.listener.PaperSignListener;
+import com.ryderbelserion.map.signs.listener.SignListener;
+import com.ryderbelserion.map.signs.listener.WorldListener;
+import com.ryderbelserion.map.signs.markers.Icon;
+import com.ryderbelserion.map.signs.markers.SignsLayer;
 import net.pl3x.map.core.Pl3xMap;
-import net.pl3x.map.signs.listener.PaperSignListener;
-import net.pl3x.map.signs.listener.SignListener;
-import net.pl3x.map.signs.listener.WorldListener;
-import net.pl3x.map.signs.markers.Icon;
-import net.pl3x.map.signs.markers.SignsLayer;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Pl3xMapSigns extends JavaPlugin {

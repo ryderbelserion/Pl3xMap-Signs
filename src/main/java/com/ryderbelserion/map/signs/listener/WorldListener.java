@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.listener;
+package com.ryderbelserion.map.signs.listener;
 
+import com.ryderbelserion.map.signs.configuration.WorldConfig;
 import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.event.EventHandler;
 import net.pl3x.map.core.event.EventListener;
@@ -31,9 +32,8 @@ import net.pl3x.map.core.event.server.ServerLoadedEvent;
 import net.pl3x.map.core.event.world.WorldLoadedEvent;
 import net.pl3x.map.core.event.world.WorldUnloadedEvent;
 import net.pl3x.map.core.world.World;
-import net.pl3x.map.signs.configuration.WorldConfig;
-import net.pl3x.map.signs.markers.Icon;
-import net.pl3x.map.signs.markers.SignsLayer;
+import com.ryderbelserion.map.signs.markers.Icon;
+import com.ryderbelserion.map.signs.markers.SignsLayer;
 import org.bukkit.Chunk;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

@@ -21,32 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.markers;
+package com.ryderbelserion.map.signs.markers;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.List;
-import org.bukkit.World;
+import net.pl3x.map.core.markers.Point;
 import org.jetbrains.annotations.NotNull;
 
-public record Sign(@NotNull Position pos, @NotNull Icon icon, @NotNull List<String> lines) {
+public record Position(int x, int y, int z) {
 
-    public boolean isSign(@NotNull World world) {
-        return world.getBlockAt(pos().x(), pos().y(), pos().z()).getState() instanceof org.bukkit.block.Sign;
+    public @NotNull Point toPoint() {
+        return Point.of(x(), z());
     }
 
-    public static @NotNull Sign load(@NotNull DataInputStream in) throws IOException {
-        return new Sign(Position.load(in), Icon.valueOf(in.readUTF()),
-                List.of(in.readUTF(), in.readUTF(), in.readUTF(), in.readUTF())
-        );
+    public static @NotNull Position load(@NotNull DataInputStream in) throws IOException {
+        return new Position(in.readInt(), in.readInt(), in.readInt());
     }
 
     public void save(@NotNull DataOutputStream out) throws IOException {
-        pos().save(out);
-        out.writeUTF(icon().name());
-        for (String line : lines()) {
-            out.writeUTF(line);
-        }
+        out.writeInt(x());
+        out.writeInt(y());
+        out.writeInt(z());
     }
 }

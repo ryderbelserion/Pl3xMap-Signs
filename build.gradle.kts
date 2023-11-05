@@ -7,7 +7,13 @@ plugins {
 repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
 
-    maven("https://api.modrinth.com/maven/")
+    exclusiveContent {
+        forRepository {
+            maven("https://api.modrinth.com/maven/")
+        }
+
+        filter { includeGroup("maven.modrinth") }
+    }
 }
 
 dependencies {

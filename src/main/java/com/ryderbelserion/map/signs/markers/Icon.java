@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.markers;
+package com.ryderbelserion.map.signs.markers;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.SignBlock;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.image.IconImage;
-import net.pl3x.map.signs.Pl3xMapSigns;
+import com.ryderbelserion.map.signs.Pl3xMapSigns;
 import org.bukkit.block.Sign;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftBlock;
 import org.jetbrains.annotations.NotNull;

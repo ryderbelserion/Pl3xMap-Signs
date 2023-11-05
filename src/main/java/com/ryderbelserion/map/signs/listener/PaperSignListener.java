@@ -21,27 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.markers;
+package com.ryderbelserion.map.signs.listener;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import net.pl3x.map.core.markers.Point;
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
+import java.util.List;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.block.sign.SignSide;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 
-public record Position(int x, int y, int z) {
+public class PaperSignListener extends SignListener {
 
-    public @NotNull Point toPoint() {
-        return Point.of(x(), z());
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSignBreak(@NotNull BlockDestroyEvent event) {
+        tryRemoveSign(event.getBlock().getState());
     }
 
-    public static @NotNull Position load(@NotNull DataInputStream in) throws IOException {
-        return new Position(in.readInt(), in.readInt(), in.readInt());
-    }
-
-    public void save(@NotNull DataOutputStream out) throws IOException {
-        out.writeInt(x());
-        out.writeInt(y());
-        out.writeInt(z());
+    protected List<String> getLines(SignSide side) {
+        return side.lines().stream()
+                // todo create component->html serializer
+                .map(line -> PlainTextComponentSerializer.plainText().serialize(line))
+                .toList();
     }
 }

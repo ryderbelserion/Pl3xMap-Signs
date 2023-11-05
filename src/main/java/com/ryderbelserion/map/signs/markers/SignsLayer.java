@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.markers;
+package com.ryderbelserion.map.signs.markers;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,11 +36,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.ryderbelserion.map.signs.configuration.WorldConfig;
 import net.pl3x.map.core.markers.Point;
 import net.pl3x.map.core.markers.layer.WorldLayer;
 import net.pl3x.map.core.markers.marker.Marker;
 import net.pl3x.map.core.markers.option.Options;
-import net.pl3x.map.signs.configuration.WorldConfig;
 import org.jetbrains.annotations.NotNull;
 
 public class SignsLayer extends WorldLayer {

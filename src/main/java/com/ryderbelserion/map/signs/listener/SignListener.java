@@ -21,16 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.listener;
+package com.ryderbelserion.map.signs.listener;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import net.pl3x.map.core.Pl3xMap;
 import net.pl3x.map.core.world.World;
-import net.pl3x.map.signs.markers.Icon;
-import net.pl3x.map.signs.markers.Position;
-import net.pl3x.map.signs.markers.Sign;
-import net.pl3x.map.signs.markers.SignsLayer;
+import com.ryderbelserion.map.signs.markers.Icon;
+import com.ryderbelserion.map.signs.markers.Position;
+import com.ryderbelserion.map.signs.markers.Sign;
+import com.ryderbelserion.map.signs.markers.SignsLayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;

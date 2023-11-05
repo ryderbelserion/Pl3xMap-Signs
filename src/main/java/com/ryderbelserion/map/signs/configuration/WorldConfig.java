@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.configuration;
+package com.ryderbelserion.map.signs.configuration;
 
 import java.nio.file.Path;
 import java.util.Locale;
@@ -30,7 +30,7 @@ import libs.org.simpleyaml.configuration.ConfigurationSection;
 import net.pl3x.map.core.configuration.AbstractConfig;
 import net.pl3x.map.core.markers.Vector;
 import net.pl3x.map.core.world.World;
-import net.pl3x.map.signs.Pl3xMapSigns;
+import com.ryderbelserion.map.signs.Pl3xMapSigns;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;

@@ -21,27 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.pl3x.map.signs.listener;
+package com.ryderbelserion.map.signs.markers;
 
-import com.destroystokyo.paper.event.block.BlockDestroyEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.List;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.block.sign.SignSide;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
-public class PaperSignListener extends SignListener {
+public record Sign(@NotNull Position pos, @NotNull Icon icon, @NotNull List<String> lines) {
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onSignBreak(@NotNull BlockDestroyEvent event) {
-        tryRemoveSign(event.getBlock().getState());
+    public boolean isSign(@NotNull World world) {
+        return world.getBlockAt(pos().x(), pos().y(), pos().z()).getState() instanceof org.bukkit.block.Sign;
     }
 
-    protected List<String> getLines(SignSide side) {
-        return side.lines().stream()
-                // todo create component->html serializer
-                .map(line -> PlainTextComponentSerializer.plainText().serialize(line))
-                .toList();
+    public static @NotNull Sign load(@NotNull DataInputStream in) throws IOException {
+        return new Sign(Position.load(in), Icon.valueOf(in.readUTF()),
+                List.of(in.readUTF(), in.readUTF(), in.readUTF(), in.readUTF())
+        );
+    }
+
+    public void save(@NotNull DataOutputStream out) throws IOException {
+        pos().save(out);
+        out.writeUTF(icon().name());
+        for (String line : lines()) {
+            out.writeUTF(line);
+        }
     }
 }
