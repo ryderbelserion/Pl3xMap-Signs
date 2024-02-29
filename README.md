@@ -6,7 +6,7 @@
 </div>
 
 ## Downloads
-https://ci.crazycrew.us/view/ryderbelserion/job/Pl3xMap-Signs/
+https://jenkins.crazycrew.us/view/other/job/Pl3xMap-Signs/
 
 ## Installation
 1) Place the jar inside your server's `plugins` folder
